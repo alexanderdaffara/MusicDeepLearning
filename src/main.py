@@ -8,6 +8,3 @@ import torch.optim as optim
 torch.manual_seed(1)
 
 print("hello world")
-print("world hello")
-print(".")
-print("unwanted print")
