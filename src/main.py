@@ -1,44 +1,34 @@
-import numpy
-import torch
-import torch.autograd as autograd
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
+"""
 
-torch.manual_seed(1)
+hLSTM, mLSTM = setUpLSTMs(magicNumbers)
 
-V_data = [1., 2., 3.]
-V = torch.tensor(V_data)
-#print(V)
+for( every file ):
+    reset hidden layers
+    convertFileToInputArray()
 
-M_data = [[1., 2., 3.], [4., 5., 6]]
-M = torch.tensor(M_data)
-#print(M)
+    #CUDA/Graphics Card speed-up?
 
-T_data = [[[1., 2., 3.], [3., 4., 5.]],
-          [[5., 6., 7.], [7., 8., 9.]]]
-T = torch.tensor(T_data)
+    trainHarmonyLSTM( hLSTM, inputArray2)
+    trainMelodyLSTM( mLSTM, inputArray1, inputArray2)
 
-#print(T)
+noteArr1 = ""
+noteArr2 = ""
 
-#print(V[0].item())
-#print(M[0])
-#print(T[0])
+for i in range(tickLimit):
+    #Returns noteArr2 appended with new prediction using hLSTM
+    noteArr2 = printHarmony(hLSTM, noteArr2)
 
-x = torch.randn((3, 4, 5))
-#print(x)
+for i in range(tickLimit):
+    noteArr1 = printMelody(mLSTM, noteArr2, noteArr1)
 
-x_1 = torch.randn(2, 3)
-y_1 = torch.randn(2, 5)
-z_1 = torch.cat([x_1, y_1], 1)
-#print(z_1)
+playMIDI(noteArr1, noteArr2)
 
-x = torch.tensor([1., 2., 3], requires_grad=True)
+# convertFileToInputArr == vectorization of music
+# trainMelodyLSTM() == how to factor in chords?
 
-y = torch.tensor([4., 5., 6], requires_grad=True)
-z = x + y
-#print(z)
+ Ideas: If multiple vectorizations, GANy thing; Music2Vec
 
+"""
 # BUT z knows something extra.
 #print(z.grad_fn)
 
@@ -85,3 +75,5 @@ for i in inputs:
     
 #inputs = torch.cat(inputs).view(len(inputs), 1, -1)
 #out, hidden = lstm(inputs, hidden)
+
+
