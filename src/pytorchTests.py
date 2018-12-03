@@ -79,3 +79,9 @@ for i in inputs:
     # Step through the sequence one element at a time.
     # after each step, hidden contains the hidden state.
     out, hidden = lstm(i.view(1, 1, -1), hidden)
+    print("LSTM")
+    print(out)
+    print(hidden)
+    
+#inputs = torch.cat(inputs).view(len(inputs), 1, -1)
+#out, hidden = lstm(inputs, hidden)
