@@ -24,5 +24,5 @@ playMIDI(noteArr1, noteArr2)
 
 # convertFileToInputArr == vectorization of music
 # trainMelodyLSTM() == how to factor in chords?
-
+# DO we transpose to the same key?
  Ideas: If multiple vectorizations, GANy thing; Music2Vec
