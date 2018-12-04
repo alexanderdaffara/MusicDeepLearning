@@ -93,8 +93,6 @@ tag_to_ix = {"DET": 0, "NN": 1, "V": 2}
 EMBEDDING_DIM = 6
 HIDDEN_DIM = 6
 
-blu = False
-
 ######################################################################
 # Create the model:
 
@@ -125,8 +123,6 @@ class LSTMPredictor(nn.Module):
 
     def forward(self, sentence):
         embeds = self.word_embeddings(sentence)
-        print("embeds")
-        print(embeds)
         lstm_out, self.hidden = self.lstm(
             embeds.view(len(sentence), 1, -1), self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
@@ -145,13 +141,11 @@ optimizer = optim.SGD(model.parameters(), lr=0.1)
 # Note that element i,j of the output is the score for tag j for word i.
 # Here we don't need to train, so the code is wrapped in torch.no_grad()
 with torch.no_grad():
-    inputs = prepare_sequence(training_data[1][0], word_to_ix)
-    
-    print(inputs)
+    inputs = prepare_sequence(training_data[0][0], word_to_ix)
     tag_scores = model(inputs)
     print(tag_scores)
 
-for epoch in range(1):  # again, normally you would NOT do 300 epochs, it is toy data
+for epoch in range(300):  # again, normally you would NOT do 300 epochs, it is toy data
     for sentence, tags in training_data:
         # Step 1. Remember that Pytorch accumulates gradients.
         # We need to clear them out before each instance
@@ -163,10 +157,7 @@ for epoch in range(1):  # again, normally you would NOT do 300 epochs, it is toy
 
         # Step 2. Get our inputs ready for the network, that is, turn them into
         # Tensors of word indices.
-        
         sentence_in = prepare_sequence(sentence, word_to_ix)
-        print("sentence_in")
-        print(sentence_in)
         targets = prepare_sequence(tags, tag_to_ix)
 
         # Step 3. Run our forward pass.
@@ -181,7 +172,6 @@ for epoch in range(1):  # again, normally you would NOT do 300 epochs, it is toy
 # See what the scores are after training
 with torch.no_grad():
     inputs = prepare_sequence(training_data[0][0], word_to_ix)
-    print(inputs)
     tag_scores = model(inputs)
 
     # The sentence is "the dog ate the apple".  i,j corresponds to score for tag j
