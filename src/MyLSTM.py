@@ -6,9 +6,11 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 INPUT_DIM = 3
-HIDDEN_DIM = 3
+HIDDEN_DIM = 256
+OUT_DIM = 3
 
-training_data = [[i, i+1, i+2] for i in range(10)]
+#training_data = [[i, i+1, i+2] for i in range(10)]
+training_data = [ [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6], [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6], [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6]]
 
 print(training_data)
 
@@ -21,6 +23,9 @@ class LSTMPredictor(nn.Module):
         # The LSTM takes word embeddings as inputs, and outputs hidden states
         # with dimensionality hidden_dim.
         self.lstm = nn.LSTM(input_dim, hidden_dim)
+         # The linear layer that maps from hidden state space to tag space
+        self.hidden2out = nn.Linear(hidden_dim, 3)
+        self.hidden = self.init_hidden()
 
     def init_hidden(self):
         # Before we've done anything, we dont have any hidden state.
@@ -33,12 +38,14 @@ class LSTMPredictor(nn.Module):
     def forward(self, inputVec):
         lstm_out, self.hidden = self.lstm(
             inputVec.view(1, 1,-1), self.hidden)
-        return lstm_out
+        out_space = self.hidden2out(lstm_out).view(1, 1, OUT_DIM)
+        #tag_scores = F.log_softmax(out_space, dim=1)
+        return out_space
     
 
 model = LSTMPredictor(INPUT_DIM, HIDDEN_DIM)
 loss_function = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=.01)
+optimizer = optim.SGD(model.parameters(), lr=.001)
 
 for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is toy data
     for i in range(len(training_data) - 1):
@@ -57,6 +64,7 @@ for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is 
 
         # Step 3. Run our forward pass.
         prediction = model(input)
+        print(input)
         print(target)
         print(prediction)
         
@@ -70,5 +78,4 @@ for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is 
         optimizer.step()
 
 with torch.no_grad():
-    inputs = torch.FloatTensor(training_data[0])
-    print(model(inputs))
+    print(model(torch.FloatTensor(training_data[0])))
