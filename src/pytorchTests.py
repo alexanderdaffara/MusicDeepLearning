@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import torch
 import torch.autograd as autograd
 from torch.autograd import Variable
