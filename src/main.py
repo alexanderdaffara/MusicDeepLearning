@@ -9,28 +9,53 @@ from music21 import *
 
 def convertFileToMIDIArr(filename):
     
-    
     s = stream.Stream()
     mf = midi.translate.streamToMidiFile(s)
     mf.open(filename, 'rb')
     mf.read()
-    
-    mStream = converter.parse(filename)
-    mStream.show('midi')
     print(mf)
     
+    melodyMIDI = mf.tracks[2].events
     
-    """
-    parsed_midi = midi.MidiFile()
-    parsed_midi.open(filename, "rb")
-    parsed_midi.read()
-    parsed_midi.close()
-    parsed_midi.open(filename, "wb")
-    parsed_midi.write()
-    parsed_midi.close()
-    """
+    melodyEvents = []
+    timeSinceLastNote = 0
+    unresolvedDuration = {}
+    unresolvedIdx = {}
     
+    for i in range(2, len(melodyMIDI) - 2, 2):
+        
+        timeSinceLastNote = timeSinceLastNote + melodyMIDI[i].time
+        
+        for val in unresolvedDuration:
+            val += melodyMIDI[i].time
+        
+        pitch = melodyMIDI[i+1].pitch
+        velocity = melodyMIDI[i+1].velocity
+        
+        if(melodyMIDI[i+1].type == 'NOTE_ON'):
+            
+            unresolvedDuration[pitch] = 0
+            unresolvedIdx[pitch] = len(melodyEvents)
+            melodyEvents.append(val2Vec(pitch, velocity, timeSinceLastNote))
+            timeSinceLastNote = 0
+        
+        else:
+            
+            melodyEvents[unresolvedIdx[pitch]][15] = unresolvedDuration[pitch]
+            del unresolvedIdx[pitch]
+            del unresolvedDuration[pitch]
+            
+        print(timeSinceLastNote)
+    #mStream = converter.parse(filename)
+    #show(mStream)
     
+    print(melodyEvents)
+    
+def val2Vec(pitch, velocity, delay):
+    toReturn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pitch, velocity, delay, -1]
+    oneHotIdx = pitch % 12
+    toReturn[oneHotIdx] = 1
+    return toReturn
     
 # Main Code Starts Here
-convertFileToMIDIArr("../MIDIs/Untitled.mid")
+convertFileToMIDIArr("../MIDIs/Happy - Copy.mid")
