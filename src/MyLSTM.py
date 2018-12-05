@@ -1,10 +1,11 @@
-# Author: Robert Guthrie
+# Author: Alexander Daffara and Aditya Chandrasekar
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import main
+from Learner2 import tag_scores
 
 INPUT_DIM = 16
 HIDDEN_DIM = 256
@@ -41,6 +42,12 @@ class LSTMPredictor(nn.Module):
             inputVec.view(1, 1,-1), self.hidden)
         out_space = self.hidden2out(lstm_out).view(1, 1, OUT_DIM)
         #tag_scores = F.log_softmax(out_space, dim=1)
+        #return tag_scores
+        
+        #print(out_space)
+        #sub_list = torch.clone(out_space[:, :, :12])
+        #sub_list = F.softmax(sub_list, dim=2)
+        #out_space[:, :, :12] = sub_list
         return out_space
     
 
@@ -48,7 +55,7 @@ model = LSTMPredictor(INPUT_DIM, HIDDEN_DIM)
 loss_function = nn.MSELoss()
 optimizer = optim.SGD(model.parameters(), lr=.001)
 
-for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is toy data
+for epoch in range(100):  # again, normally you would NOT do 300 epochs, it is toy data
     for i in range(len(training_data) - 1):
         # Step 1. Remember that Pytorch accumulates gradients.
         # We need to clear them out before each instance
@@ -65,9 +72,9 @@ for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is 
 
         # Step 3. Run our forward pass.
         prediction = model(input)
-        print(input)
-        print(target)
-        print(prediction)
+        #print(input)
+        #print(target)
+        #print(prediction)
         
 
         # Step 4. Compute the loss, gradients, and update the parameters by
@@ -78,5 +85,5 @@ for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is 
         loss.backward()
         optimizer.step()
 
-with torch.no_grad():
-    print(model(torch.FloatTensor(training_data[0])))
+#with torch.no_grad():
+#    print(model(torch.FloatTensor(training_data[0])))

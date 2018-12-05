@@ -54,8 +54,8 @@ def convertFileToMIDIArr(filename):
 def val2Vec(pitch, velocity, delay):
     toReturn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pitch, velocity, delay, -1]
     oneHotIdx = pitch % 12
-    toReturn[oneHotIdx] = 1
+    toReturn[oneHotIdx] = 100
     return toReturn
     
 # Main Code Starts Here
-convertFileToMIDIArr("../MIDIs/Untitled.mid")
+print(convertFileToMIDIArr("../MIDIs/Happy - Copy.mid"))
