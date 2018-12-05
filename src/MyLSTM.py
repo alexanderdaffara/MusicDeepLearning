@@ -50,7 +50,6 @@ class LSTMPredictor(nn.Module):
         #out_space[:, :, :12] = sub_list
         return out_space
     
-
 model = LSTMPredictor(INPUT_DIM, HIDDEN_DIM)
 loss_function = nn.MSELoss()
 optimizer = optim.SGD(model.parameters(), lr=.001)
