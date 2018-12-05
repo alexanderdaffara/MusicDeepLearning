@@ -13,7 +13,7 @@ def convertFileToMIDIArr(filename):
     mf = midi.translate.streamToMidiFile(s)
     mf.open(filename, 'rb')
     mf.read()
-    print(mf)
+    #print(mf)
     
     melodyMIDI = mf.tracks[2].events
     
@@ -27,7 +27,7 @@ def convertFileToMIDIArr(filename):
         timeSinceLastNote = timeSinceLastNote + melodyMIDI[i].time
         
         for val in unresolvedDuration:
-            val += melodyMIDI[i].time
+            unresolvedDuration[val] = unresolvedDuration[val] + melodyMIDI[i].time
         
         pitch = melodyMIDI[i+1].pitch
         velocity = melodyMIDI[i+1].velocity
@@ -45,11 +45,11 @@ def convertFileToMIDIArr(filename):
             del unresolvedIdx[pitch]
             del unresolvedDuration[pitch]
             
-        print(timeSinceLastNote)
+        #print(timeSinceLastNote)
     #mStream = converter.parse(filename)
     #show(mStream)
     
-    print(melodyEvents)
+    return melodyEvents
     
 def val2Vec(pitch, velocity, delay):
     toReturn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pitch, velocity, delay, -1]
@@ -58,4 +58,4 @@ def val2Vec(pitch, velocity, delay):
     return toReturn
     
 # Main Code Starts Here
-convertFileToMIDIArr("../MIDIs/Happy - Copy.mid")
+convertFileToMIDIArr("../MIDIs/Untitled.mid")

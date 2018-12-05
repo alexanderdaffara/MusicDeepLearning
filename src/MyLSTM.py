@@ -4,13 +4,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import main
 
-INPUT_DIM = 3
+INPUT_DIM = 16
 HIDDEN_DIM = 256
-OUT_DIM = 3
+OUT_DIM = 16
 
 #training_data = [[i, i+1, i+2] for i in range(10)]
-training_data = [ [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6], [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6], [1,2,3], [3, 2, 1], [6, 4, 2], [2, 4, 6]]
+training_data = main.convertFileToMIDIArr("../MIDIs/Happy - Copy.mid")
 
 print(training_data)
 
@@ -24,7 +25,7 @@ class LSTMPredictor(nn.Module):
         # with dimensionality hidden_dim.
         self.lstm = nn.LSTM(input_dim, hidden_dim)
          # The linear layer that maps from hidden state space to tag space
-        self.hidden2out = nn.Linear(hidden_dim, 3)
+        self.hidden2out = nn.Linear(hidden_dim, OUT_DIM)
         self.hidden = self.init_hidden()
 
     def init_hidden(self):
@@ -60,7 +61,7 @@ for epoch in range(1000):  # again, normally you would NOT do 300 epochs, it is 
         # Step 2. Get our inputs ready for the network, that is, turn them into
         # Tensors of word indices.
         input = torch.FloatTensor(training_data[i])
-        target = torch.FloatTensor(training_data[i+1]).view(1, 1, 3)
+        target = torch.FloatTensor(training_data[i+1]).view(1, 1, OUT_DIM)
 
         # Step 3. Run our forward pass.
         prediction = model(input)
