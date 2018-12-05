@@ -1,51 +1,41 @@
 from music21 import *
 
-#s = stream.Stream()
-#mf = midi.translate.streamToMidiFile(s)
-#mf.open('/MIDIs/happy.mid', 'wb')
 """
-s = stream.Stream()
-mf = midi.translate.streamToMidiFile(s)
+[0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 102, 0, 2560],
 
-mt = midi.MidiTrack(1)
+[0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 102, 2560, 512]
 
-dt = midi.MidiEvent(mt)
-dt.type = 'DeltaTime'
-dt.time = 0
-dt.channel = None
+1280 == quarter note for all MIDI
 
-me1 = midi.MidiEvent(mt)
-me1.type = 'NOTE_ON'
-me1.channel = 3
-me1.time = 200
-me1.pitch = 60
-me1.velocity = 120
-
-dt1 = midi.MidiEvent(mt)
-dt1.type = 'DeltaTime'
-dt1.time = 200
-dt1.channel = None
-
-me2 = midi.MidiEvent(mt)
-me2.type = 'NOTE_OFF'
-me2.channel = 3
-me2.time = 200
-me2.pitch = 60
-me2.velocity = 120
-
-mt.events.append(me1)
-mt.events.append(dt)
-mt.events.append(me2)
-mt.events.append(dt1)
-mf.tracks.append(mt)
-
-print(mf)
-
-mf.open("../MIDIs/output.mid", 'wb')
-mf.write()
-mf.close
 """
-
 s1 = stream.Stream()
-#s1.show('midi')
-s1.write('midi', "../MIDIs/output.mid")
+
+p = pitch.Pitch()
+p.midi = 74
+n = note.Note()
+n.duration = duration.Duration( 2560 / 1280 )
+n.pitch = p
+n.volume.velocity = 120
+
+s1.insert(0.0, n)
+
+p = pitch.Pitch()
+p.midi = 73
+n = note.Note()
+n.duration = duration.Duration( 512 / 1280)
+n.pitch = p
+n.volume.velocity = 102
+
+s1.insert((2560 / 1280), n)
+
+p = pitch.Pitch()
+p.midi = 74
+n = note.Note()
+n.duration = duration.Duration( 512 / 1280)
+n.pitch = p
+n.volume.velocity = 102
+
+s1.insert((3072 / 1280), n)
+
+s1.show('midi')
+

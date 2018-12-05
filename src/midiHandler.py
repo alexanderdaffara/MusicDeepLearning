@@ -58,4 +58,29 @@ def val2Vec(pitch, velocity, delay):
     toReturn[oneHotIdx] = 100
     return toReturn
     
-# Main Code Starts Here
+def printToMidi(inputList):
+    
+    s1 = stream.Stream()
+    
+    timePassed = 0
+    
+    #print(inputList)
+    #print(len(inputList))
+    
+    for i in range(len(inputList)):
+        
+        timePassed = timePassed + inputList[i][14]
+        #print("timePassed: %d\n" % (timePassed) )
+        
+        p = pitch.Pitch()
+        p.midi = inputList[i][12]
+        n = note.Note()
+        n.duration = duration.Duration( inputList[i][15] / 1280 )
+        n.pitch = p
+        n.volume.velocity = inputList[i][13]
+        
+        s1.insert((timePassed / 1280), n)
+    
+    s1.show('midi')
+        
+    

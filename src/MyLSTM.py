@@ -52,14 +52,14 @@ def prepareLSTM(inputDim, hiddenDim, outputDim):
 
 def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs):
     
-    print(training_data)
+    #print(training_data)
 
     
     training_data = torch.FloatTensor(training_data)
     
     #.view(len(training_data), 1, output_dim)
     
-    print(training_data)
+    #print(training_data)
     
     for epoch in range(epochs):  # again, normally you would NOT do 300 epochs, it is toy data
         for i in range(len(training_data) - 1):
