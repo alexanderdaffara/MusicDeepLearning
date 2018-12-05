@@ -49,6 +49,7 @@ def convertFileToMIDIArr(filename):
     #mStream = converter.parse(filename)
     #show(mStream)
     
+    mf.close()
     return melodyEvents
     
 def val2Vec(pitch, velocity, delay):
