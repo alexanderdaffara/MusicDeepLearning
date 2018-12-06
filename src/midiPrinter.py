@@ -35,26 +35,28 @@ for i in range(4):
     rest[i] = np.random.randint(0, 100)
 inputArr = inputArr + [oneHotArr + rest]
 """
-nextPitch = pitch_data[0][0]
-nextRhythm = rhythm_data[0][0]
-print(nextPitch)
-print(nextRhythm)
+nextPitch = pitch_data[4][6]
+nextRhythm = rhythm_data[3][0]
+
+#print(nextPitch)
+#print(nextRhythm)
 
 nextPitch = mpLSTM(nextPitch).tolist()[0][0]
+#print(nextPitch)
 nextRhythm = mrLSTM(nextRhythm).tolist()[0][0]
-print(mrLSTM(nextRhythm))
-print(nextRhythm)
+#print(nextRhythm)
 
 pitchArr = []
 rhythmArr = []
-
+pitchArr.append(nextPitch)
+rhythmArr.append(nextRhythm)
 #print()
 for i in range(100):
     #print(i)
     #print(inputArr[i])
-    print(mpLSTM(inputArr[i][:12]).tolist()[0][0])
-    nextPitch = mpLSTM(inputArr[i][:12]).tolist()[0][0]
-    nextRhythm = mrLSTM(inputArr[i][14:]).tolist()[0][0]
+    print(mpLSTM(pitchArr[i]).tolist()[0][0])
+    nextPitch = mpLSTM(pitchArr[i]).tolist()[0][0]
+    nextRhythm = mrLSTM(rhythmArr[i]).tolist()[0][0]
     pitchArr.append(nextPitch)
     rhythmArr.append(nextRhythm)
 """

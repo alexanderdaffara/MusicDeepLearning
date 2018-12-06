@@ -78,7 +78,7 @@ def printToMidi(pitchList, rhythmList):
         
         #max2 = max
         #TODO: better combination of continuous and discrete pitch
-        max = inputList[i][0]
+        max = pitchList[i][0]
         maxIdx = 0
         #maxIdx2 = maxIdx
         for j in range(1, 12):
@@ -88,7 +88,7 @@ def printToMidi(pitchList, rhythmList):
                 maxIdx = j
                 #maxIdx2 = maxIdx
         #If midi is p unconfident, we trust pitch?
-        p.midi = maxIdx * octave
+        p.midi = maxIdx + 12*octave
         
         #if((i % randomGap) == 0):
         #    p.midi = maxIdx2 * octave

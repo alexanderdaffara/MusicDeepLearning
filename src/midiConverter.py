@@ -23,8 +23,17 @@ for song in range(len(training_data)):
         pitch_data[song][note] = training_data[song][note][:12]
         rhythm_data[song][note] = training_data[song][note][14:]
         
-        print(pitch_data[song][note])
-        print(rhythm_data[song][note])
+        #print(pitch_data[song][note])
+        #print(rhythm_data[song][note])
+        """
+        for value in range(len(pitch_data[song][note])):
+            
+            if(type(pitch_data[song][note][value]) is not int):
+                print("GOOOD GOOOD GOOD")
+        for value in range(len(rhythm_data[song][note])):
+            if(type(rhythm_data[song][note][value]) is not int):
+                print("YESSSS")
+        """
         
 with open("../Intermediates/pitch_data", "wb") as fp:
     pickle.dump(pitch_data, fp)

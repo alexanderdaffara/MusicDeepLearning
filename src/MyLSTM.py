@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch.nn.utils.clip_grad as clip
 
 class LSTMPredictor(nn.Module):
 
@@ -25,15 +26,26 @@ class LSTMPredictor(nn.Module):
         # Refer to the Pytorch documentation to see exactly
         # why they have this dimensionality.
         # The axes semantics are (num_layers, minibatch_size, hidden_dim)
-        return (torch.zeros(1, 1, self.hidden_dim),
-                torch.zeros(1, 1, self.hidden_dim))
+        return (torch.zeros(2, 5, self.hidden_dim),
+                torch.zeros(2, 5, self.hidden_dim))
 
     def forward(self, inputVec):
+        #print("inputVec =")
         #print(inputVec)
+        
         inputVec = torch.FloatTensor(inputVec).view(1, 1, -1)
+        
+        #print(inputVec)
         
         lstm_out, self.hidden = self.lstm(
             inputVec, self.hidden)
+        
+        """
+        print("lstm_out, hidden: ")
+        print(lstm_out)
+        print(self.hidden)
+        """
+        
         out_space = self.hidden2out(lstm_out).view(1, 1, self.output_dim)
         
         #print(out_space)
@@ -41,7 +53,7 @@ class LSTMPredictor(nn.Module):
         #sub_list = F.softmax(sub_list, dim=2)
         #new_out = torch.cat([ sub_list, out_space[:, :, 12:] ], dim = 2)
         #print(new_out)
-        
+        clip.clip_grad_value_(out_space, .5)
         return out_space
     
 class LSTMPredictorSoftmax(nn.Module):
@@ -69,11 +81,12 @@ class LSTMPredictorSoftmax(nn.Module):
 
     def forward(self, inputVec):
         
-        print(inputVec)
         inputVec = torch.FloatTensor(inputVec).view(1, 1, -1)
         
         lstm_out, self.hidden = self.lstm(
             inputVec, self.hidden)
+        
+        
         out_space = self.hidden2out(lstm_out).view(1, 1, self.output_dim)
         
         new_out = F.softmax(out_space, dim=2)
@@ -86,7 +99,7 @@ def prepareLSTM(inputDim, hiddenDim, outputDim, isSoftMax=False):
     else:
         model = LSTMPredictorSoftmax(inputDim, hiddenDim, outputDim)
     loss_function = nn.MSELoss()
-    optimizer = optim.SGD(model.parameters(), lr=.1)
+    optimizer = optim.SGD(model.parameters(), lr=.01)
     return (model, loss_function, optimizer)
 
 def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs):
@@ -102,6 +115,8 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
     
     for epoch in range(epochs):
         
+        print(epoch)
+        
         for i in range(len(training_data) - 1):
             
             # Step 1. Remember that Pytorch accumulates gradients.
@@ -116,9 +131,11 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
             # Tensors of word indices.
             input = torch.FloatTensor(training_data[i])
             target = torch.FloatTensor(training_data[i+1]).view(1, 1, output_dim)
+            #print(target)
     
             # Step 3. Run our forward pass.
             prediction = model(input)
+            #print(prediction)
             #print(input)
             #print(target)
             #print(prediction)
@@ -127,6 +144,7 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
             # Step 4. Compute the loss, gradients, and update the parameters by
             #  calling optimizer.step()
             loss = loss_function(target, prediction)
+            #print(loss)
             loss.backward()
             optimizer.step()
 
