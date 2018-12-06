@@ -73,7 +73,16 @@ def printToMidi(inputList):
         #print("timePassed: %d\n" % (timePassed) )
         
         p = pitch.Pitch()
-        p.midi = inputList[i][12]
+        octave = inputList[i][12] // 12 + 1
+        max = inputList[i][0]
+        #TODO: better combination of continuous and discrete pitch
+        maxIdx = 0
+        for j in range(1, 12):
+            if (inputList[i][j] > max):
+                max = inputList[i][j]
+                maxIdx = j
+        #If midi is p unconfident, we trust pitch?
+        p.midi = maxIdx * octave
         n = note.Note()
         n.duration = duration.Duration( inputList[i][15] / 1280 )
         n.pitch = p
