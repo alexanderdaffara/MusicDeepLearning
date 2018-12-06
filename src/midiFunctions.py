@@ -88,7 +88,7 @@ def printToMidi(pitchList, rhythmList):
                 maxIdx = j
                 #maxIdx2 = maxIdx
         #If midi is p unconfident, we trust pitch?
-        p.midi = maxIdx + 12*octave
+        p.midi = maxIdx + 12 * octave
         
         #if((i % randomGap) == 0):
         #    p.midi = maxIdx2 * octave

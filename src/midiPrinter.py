@@ -22,8 +22,8 @@ with open("../Intermediates/rhythm_data", "rb") as fp:
     rhythm_data = pickle.load(fp)
  
     
-mpLSTM = torch.load("../Intermediates/mpLSTM")
-mrLSTM = torch.load("../Intermediates/mrLSTM")
+mpLSTM = torch.load("../Intermediates/mpLSTMtmp")
+mrLSTM = torch.load("../Intermediates/mrLSTMtmp")
 
 """
 inputArr = []
@@ -42,9 +42,10 @@ nextRhythm = rhythm_data[3][0]
 #print(nextRhythm)
 
 nextPitch = mpLSTM(nextPitch).tolist()[0][0]
-#print(nextPitch)
+print(nextRhythm)
 nextRhythm = mrLSTM(nextRhythm).tolist()[0][0]
 #print(nextRhythm)
+
 
 pitchArr = []
 rhythmArr = []

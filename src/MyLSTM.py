@@ -26,8 +26,8 @@ class LSTMPredictor(nn.Module):
         # Refer to the Pytorch documentation to see exactly
         # why they have this dimensionality.
         # The axes semantics are (num_layers, minibatch_size, hidden_dim)
-        return (torch.zeros(2, 5, self.hidden_dim),
-                torch.zeros(2, 5, self.hidden_dim))
+        return (torch.zeros(1, 1, self.hidden_dim),
+                torch.zeros(1, 1, self.hidden_dim))
 
     def forward(self, inputVec):
         #print("inputVec =")
@@ -53,7 +53,8 @@ class LSTMPredictor(nn.Module):
         #sub_list = F.softmax(sub_list, dim=2)
         #new_out = torch.cat([ sub_list, out_space[:, :, 12:] ], dim = 2)
         #print(new_out)
-        clip.clip_grad_value_(out_space, .5)
+        #clip.clip_grad_value_(out_space, .5)
+        
         return out_space
     
 class LSTMPredictorSoftmax(nn.Module):
@@ -93,11 +94,17 @@ class LSTMPredictorSoftmax(nn.Module):
         
         return new_out
     
-def prepareLSTM(inputDim, hiddenDim, outputDim, isSoftMax=False):
-    if not isSoftMax:
-        model = LSTMPredictor(inputDim, hiddenDim, outputDim)
-    else:
+def prepareLSTM(inputDim, hiddenDim, outputDim, isSoftMax):
+    
+    if (isSoftMax == True):
         model = LSTMPredictorSoftmax(inputDim, hiddenDim, outputDim)
+        #print("softmax input")
+        #print(inputDim)
+    else:
+        model = LSTMPredictor(inputDim, hiddenDim, outputDim)
+        #print("not softmax inputDim")
+        #print(inputDim)
+        
     loss_function = nn.MSELoss()
     optimizer = optim.SGD(model.parameters(), lr=.01)
     return (model, loss_function, optimizer)
@@ -129,12 +136,14 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
     
             # Step 2. Get our inputs ready for the network, that is, turn them into
             # Tensors of word indices.
-            input = torch.FloatTensor(training_data[i])
-            target = torch.FloatTensor(training_data[i+1]).view(1, 1, output_dim)
+            input = torch.FloatTensor(training_data[i]).view(1, 1, model.output_dim)
+            target = torch.FloatTensor(training_data[i+1]).view(1, 1, model.output_dim)
             #print(target)
     
             # Step 3. Run our forward pass.
+            #print(input)
             prediction = model(input)
+            #print(prediction)
             #print(prediction)
             #print(input)
             #print(target)
