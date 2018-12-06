@@ -10,17 +10,26 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-training_data = []
-with open("../Intermediates/training_data", "rb") as fp:
-    training_data = pickle.load(fp)
+mpDim = 12
+mrDim = 2
 
-print(training_data)
-
-(mLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(16, 512, 16)
-
-for i in range(len(training_data)):
+pitch_data = []
+with open("../Intermediates/pitch_data", "rb") as fp:
+    pitch_data = pickle.load(fp)
     
-    print("Training on Song %d\n" % i)
-    MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[i], 15)
+rhythm_data = []
+with open("../Intermediates/rhythm_data", "rb") as fp:
+    rhythm_data = pickle.load(fp)
 
-torch.save(mLSTM, "../Intermediates/mLSTM")
+(mpLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(12, 512, 12, isSoftMax=True)
+(mrLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(2, 512, 2)
+
+for i in range(len(pitch_data)):
+    
+    print("Training on Song %d\n" % (i))
+    
+    MyLSTM.trainLSTM(mpDim, mpLSTM, loss_function, optimizer, pitch_data[i], 5)
+    MyLSTM.trainLSTM(mrDim, mrLSTM, loss_function, optimizer, rhythm_data[i], 5)
+
+torch.save(mpLSTM, "../Intermediates/mpLSTM")
+torch.save(mrLSTM, "../Intermediates/mrLSTM")

@@ -55,10 +55,10 @@ def convertFileToMIDIArr(filename):
 def val2Vec(pitch, velocity, delay):
     toReturn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pitch, velocity, delay, -1]
     oneHotIdx = pitch % 12
-    toReturn[oneHotIdx] = 1000
+    toReturn[oneHotIdx] = 1
     return toReturn
     
-def printToMidi(inputList):
+def printToMidi(pitchList, rhythmList):
     
     s1 = stream.Stream()
     
@@ -68,23 +68,23 @@ def printToMidi(inputList):
     #print(inputList)
     #print(len(inputList))
     
-    for i in range(len(inputList)):
+    for i in range(len(pitchList)):
         
-        timePassed = timePassed + inputList[i][14]
+        timePassed = timePassed + rhythmList[i][0]
         #print("timePassed: %d\n" % (timePassed) )
         
         p = pitch.Pitch()
-        octave = inputList[i][12] // 12 + 1
-        max = inputList[i][0]
+        octave = 4
+        
         #max2 = max
         #TODO: better combination of continuous and discrete pitch
-        
+        max = inputList[i][0]
         maxIdx = 0
         #maxIdx2 = maxIdx
         for j in range(1, 12):
-            if (inputList[i][j] > max):
+            if (pitchList[i][j] > max):
                 #max2 = max
-                max = inputList[i][j]
+                max = pitchList[i][j]
                 maxIdx = j
                 #maxIdx2 = maxIdx
         #If midi is p unconfident, we trust pitch?
@@ -94,12 +94,13 @@ def printToMidi(inputList):
         #    p.midi = maxIdx2 * octave
         
         n = note.Note()
-        n.duration = duration.Duration( inputList[i][15] / 1280 )
+        n.duration = duration.Duration( rhythmList[i][1] / 1280 )
         n.pitch = p
-        n.volume.velocity = inputList[i][13]
+        n.volume.velocity = 90
         
         s1.insert((timePassed / 1280), n)
     
     s1.show('midi')
+    
         
     
