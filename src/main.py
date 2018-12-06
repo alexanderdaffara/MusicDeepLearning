@@ -1,4 +1,4 @@
-import midiHandler
+import midiFunctions
 import MyLSTM
 
 from fileinput import filename
@@ -13,11 +13,11 @@ import math
 
 (mLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(16, 1024, 16)
 training_data = []
-training_data.append(midiHandler.convertFileToMIDIArr("../MIDIs/Get Lucky.mid"))
-training_data.append(midiHandler.convertFileToMIDIArr("../MIDIs/Happy - Copy.mid"))
+training_data.append(midiFunctions.convertFileToMIDIArr("../MIDIs/Get Lucky.mid"))
+training_data.append(midiFunctions.convertFileToMIDIArr("../MIDIs/Happy - Copy.mid"))
 print(training_data)
 
-#MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[0], 200)
+MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[0], 200)
 MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[1], 400)
 
 inputArr = []
@@ -42,4 +42,4 @@ for i in range(100):
     #print(next)
 
 #print(inputArr)
-midiHandler.printToMidi(inputArr)
+midiFunctions.printToMidi(inputArr)
