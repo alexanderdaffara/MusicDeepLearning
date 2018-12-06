@@ -6,9 +6,17 @@ from music21 import *
 import math
 
 training_data = []
-training_data.append(midiFunctions.convertFileToMIDIArr("../MIDIs/Get Lucky.mid"))
-training_data.append(midiFunctions.convertFileToMIDIArr("../MIDIs/Happy - Copy.mid"))
+import os
+ 
+path = '../MIDIs/JazzSongs'
+listing = os.listdir(path)
+for infile in listing:
+    training_data.append(midiFunctions.convertFileToMIDIArr(os.path.join(path, infile)))
 
+for i in range(len(training_data)):
+    for j in range(len(training_data[i])):
+        print(training_data[i][j])
+        
 with open("../Intermediates/training_data", "wb") as fp:
     pickle.dump(training_data, fp)
     

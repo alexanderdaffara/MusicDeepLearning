@@ -28,7 +28,6 @@ for i in range(4):
     rest[i] = np.random.randint(0, 100)
 inputArr = inputArr + [oneHotArr + rest]
 inputArr[0] = mLSTM(inputArr[0]).tolist()[0][0]
-inputArr[0] = training_data[0][0]
 
 #print()
 for i in range(100):

@@ -16,9 +16,11 @@ with open("../Intermediates/training_data", "rb") as fp:
 
 print(training_data)
 
-(mLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(16, 256, 16)
+(mLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(16, 512, 16)
 
-MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[0], 200)
-MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[1], 200)
+for i in range(len(training_data)):
+    
+    print("Training on Song %d\n" % i)
+    MyLSTM.trainLSTM(16, mLSTM, loss_function, optimizer, training_data[i], 15)
 
 torch.save(mLSTM, "../Intermediates/mLSTM")

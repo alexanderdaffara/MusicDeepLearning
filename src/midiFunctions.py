@@ -55,13 +55,14 @@ def convertFileToMIDIArr(filename):
 def val2Vec(pitch, velocity, delay):
     toReturn = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pitch, velocity, delay, -1]
     oneHotIdx = pitch % 12
-    toReturn[oneHotIdx] = 100
+    toReturn[oneHotIdx] = 1000
     return toReturn
     
 def printToMidi(inputList):
     
     s1 = stream.Stream()
     
+    #randomGap = 2
     timePassed = 0
     
     #print(inputList)
@@ -75,14 +76,23 @@ def printToMidi(inputList):
         p = pitch.Pitch()
         octave = inputList[i][12] // 12 + 1
         max = inputList[i][0]
+        #max2 = max
         #TODO: better combination of continuous and discrete pitch
+        
         maxIdx = 0
+        #maxIdx2 = maxIdx
         for j in range(1, 12):
             if (inputList[i][j] > max):
+                #max2 = max
                 max = inputList[i][j]
                 maxIdx = j
+                #maxIdx2 = maxIdx
         #If midi is p unconfident, we trust pitch?
         p.midi = maxIdx * octave
+        
+        #if((i % randomGap) == 0):
+        #    p.midi = maxIdx2 * octave
+        
         n = note.Note()
         n.duration = duration.Duration( inputList[i][15] / 1280 )
         n.pitch = p

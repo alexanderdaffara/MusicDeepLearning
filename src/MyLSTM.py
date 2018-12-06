@@ -35,19 +35,19 @@ class LSTMPredictor(nn.Module):
         lstm_out, self.hidden = self.lstm(
             inputVec, self.hidden)
         out_space = self.hidden2out(lstm_out).view(1, 1, self.output_dim)
-        #tag_scores = F.log_softmax(out_space, dim=1)
-        #return tag_scores
         
         #print(out_space)
         #sub_list = torch.clone(out_space[:, :, :12])
         #sub_list = F.softmax(sub_list, dim=2)
-        #out_space[:, :, :12] = sub_list
-        return out_space
+        #new_out = torch.cat([ sub_list, out_space[:, :, 12:] ], dim = 2)
+        #print(new_out)
+        
+        return new_out
     
 def prepareLSTM(inputDim, hiddenDim, outputDim):
     model = LSTMPredictor(inputDim, hiddenDim, outputDim)
     loss_function = nn.MSELoss()
-    optimizer = optim.SGD(model.parameters(), lr=.01)
+    optimizer = optim.Adam(model.parameters(), lr=.1)
     return (model, loss_function, optimizer)
 
 def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs):
@@ -63,7 +63,6 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
     
     for epoch in range(epochs):
         
-        print(epoch)
         
         for i in range(len(training_data) - 1):
             
@@ -90,7 +89,7 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
     
             # Step 4. Compute the loss, gradients, and update the parameters by
             #  calling optimizer.step()
-            loss = loss_function(prediction, target)
+            loss = loss_function(target, prediction)
             loss.backward()
             optimizer.step()
 
