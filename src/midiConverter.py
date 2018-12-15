@@ -29,10 +29,10 @@ for song in range(len(training_data)):
         for value in range(len(pitch_data[song][note])):
             
             if(type(pitch_data[song][note][value]) is not int):
-                print("GOOOD GOOOD GOOD")
+                print("input error")
         for value in range(len(rhythm_data[song][note])):
             if(type(rhythm_data[song][note][value]) is not int):
-                print("YESSSS")
+                print("input error")
         """
 
 print(pitch_data)

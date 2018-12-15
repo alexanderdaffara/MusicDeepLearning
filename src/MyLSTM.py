@@ -16,19 +16,13 @@ class LSTMPredictor(nn.Module):
         self.hidden_dim = hidden_dim
         self.output_dim = output_dim
 
-        # The LSTM takes word embeddings as inputs, and outputs hidden states
-        # with dimensionality hidden_dim.
-        
         
         self.lstm = nn.LSTM(input_dim, hidden_dim)
         self.hidden2out = nn.Linear(hidden_dim, self.output_dim)
         self.hidden = self.init_hidden()
 
     def init_hidden(self):
-        # Before we've done anything, we dont have any hidden state.
-        # Refer to the Pytorch documentation to see exactly
-        # why they have this dimensionality.
-        # The axes semantics are (num_layers, minibatch_size, hidden_dim)
+
         return (torch.zeros(1, 1, self.hidden_dim),
                 torch.zeros(1, 1, self.hidden_dim))
 
@@ -42,11 +36,6 @@ class LSTMPredictor(nn.Module):
         lstm_out, self.hidden = self.lstm(
             inputVec, self.hidden)
         
-        """
-        print("lstm_out, hidden: ")
-        print(lstm_out)
-        print(self.hidden)
-        """
         squashifier = nn.Tanh()  
         out_space = squashifier(lstm_out)
 
@@ -69,18 +58,14 @@ class LSTMPredictorSoftmax(nn.Module):
         self.hidden_dim = hidden_dim
         self.output_dim = output_dim
 
-        # The LSTM takes word embeddings as inputs, and outputs hidden states
-        # with dimensionality hidden_dim.
+
         self.lstm = nn.LSTM(input_dim, hidden_dim)
-         # The linear layer that maps from hidden state space to tag space
+
         self.hidden2out = nn.Linear(hidden_dim, self.output_dim)
         self.hidden = self.init_hidden()
 
     def init_hidden(self):
-        # Before we've done anything, we dont have any hidden state.
-        # Refer to the Pytorch documentation to see exactly
-        # why they have this dimensionality.
-        # The axes semantics are (num_layers, minibatch_size, hidden_dim)
+        
         return (torch.zeros(1, 1, self.hidden_dim),
                 torch.zeros(1, 1, self.hidden_dim))
 
@@ -141,34 +126,25 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
 
         for i in range(len(training_data) - 1):
             
-            
-            # Step 1. Remember that Pytorch accumulates gradients.
-            # We need to clear them out before each instance
             model.zero_grad()
-    
-            # Also, we need to clear out the hidden state of the LSTM,
-            # detaching it from its history on the last instance.
+
             model.hidden = model.init_hidden()
     
-            # Step 2. Get our inputs ready for the network, that is, turn them into
-            # Tensors of word indices.
             input = torch.FloatTensor(training_data[i]).view(1, 1, model.output_dim)
             target = torch.FloatTensor(training_data[i+1]).view(1, 1, model.output_dim)
-            #print(target)
-    
-            # Step 3. Run our forward pass.
-            #print(input)
-            prediction = model(input)
-            #print(prediction)
-            #print(prediction)
-            #print(input)
-            #print(target)
-            #print(prediction)
             
+            #print(target)
     
-            # Step 4. Compute the loss, gradients, and update the parameters by
-            #  calling optimizer.step()
+
+            prediction = model(input)
+            
+            #print(prediction)
+            #print(input)
+            #print(target)
+            
             loss = loss_function(target, prediction)
+            
+            #print(loss)
             
             #plotty.times.append(plotty.ticker)
             #plotty.ticker = plotty.ticker + 1
@@ -183,5 +159,6 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
         plottyPerEpoch.ticker = plottyPerEpoch.ticker + 1
         plottyPerEpoch.losses.append(totalEpochLoss)
     return
+
 #with torch.no_grad():
 #    print(model(torch.FloatTensor(training_data[0])))

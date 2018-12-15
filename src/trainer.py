@@ -22,7 +22,8 @@ rhythm_data = []
 with open("../Intermediates/rhythm_data", "rb") as fp:
     rhythm_data = pickle.load(fp)
 
-(mpLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(12, 1024, 12, True)
+#Input parameters: input dimension, hidden dimension, outputDimension, isSoftmax
+(mpLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(12, 1024, 12, False)
 (mrLSTM, loss_function, optimizer) = MyLSTM.prepareLSTM(2, 1024, 2, False)
 
 
@@ -30,11 +31,11 @@ for i in range(len(pitch_data)):
     
     print("Training on Song %d\n" % (i))
     
-    #print(rhythm_data[i])
-    MyLSTM.trainLSTM(mpDim, mpLSTM, loss_function, optimizer, pitch_data[i], 1)
+    MyLSTM.trainLSTM(mpDim, mpLSTM, loss_function, optimizer, pitch_data[i], 5)
     MyLSTM.trainLSTM(mrDim, mrLSTM, loss_function, optimizer, rhythm_data[i], 10)
     
     
+    #Saves current model parameters to intermediates
     if(i % 10 == 0):
         torch.save(mpLSTM, "../Intermediates/mpLSTMtmp")
         torch.save(mrLSTM, "../Intermediates/mrLSTMtmp")
@@ -45,7 +46,7 @@ for i in range(len(pitch_data)):
         
         plt.plot(MyLSTM.plottyPerEpoch.times, MyLSTM.plottyPerEpoch.losses, 'ro')
         plt.show()
-        print("saved!")
+        #print("saved!")
 
 plt.show()
 

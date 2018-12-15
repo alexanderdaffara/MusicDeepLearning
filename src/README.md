@@ -1,30 +1,12 @@
+Authors: Aditya Chandrasekar and Alexander Claudino Daffara
 
-hLSTM, mLSTM = setUpLSTMs(magicNumbers)
+The main.py file captures the control flow of our code, from converting MIDI files to
+vectorizations, passing them into our two melody LSTMs, to using the trained models
+to print these vector represntations as actual MIDI output
 
-for( every file ):
-     reset hidden layers
-    
-    inputArr1, inputArr2 = convertFileToInputArray()
-
-    CUDA/Graphics Card speed-up?
-
-    trainHarmonyLSTM( hLSTM, inputArray2)
-    trainMelodyLSTM( mLSTM, inputArray1, inputArray2)
-
-noteArr1 = ""
-noteArr2 = ""
-
-for i in range(tickLimit):
-    
-   #Returns noteArr2 appended with new prediction using hLSTM
-    noteArr2 = printHarmony(hLSTM, noteArr2)
-
-for i in range(tickLimit):
-    noteArr1 = printMelody(mLSTM, noteArr2, noteArr1)
+To find individual parts of it, specifically the files in which we create and
+train the model:
+	Our LSTM implementation can be found in MyLSTM.py
+	Our Training can be found in trainer.py
 
 
-smartInteractiveOutput?
-playMIDI(noteArr1, noteArr2)
-
-
-# DO we transpose to the same key?
