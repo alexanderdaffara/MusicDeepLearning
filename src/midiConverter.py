@@ -34,7 +34,9 @@ for song in range(len(training_data)):
             if(type(rhythm_data[song][note][value]) is not int):
                 print("YESSSS")
         """
-        
+
+print(pitch_data)
+
 with open("../Intermediates/pitch_data", "wb") as fp:
     pickle.dump(pitch_data, fp)
     

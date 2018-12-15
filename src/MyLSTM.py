@@ -7,6 +7,7 @@ import torch.optim as optim
 import torch.nn.utils.clip_grad as clip
 
 
+
 class LSTMPredictor(nn.Module):
 
 
@@ -17,6 +18,8 @@ class LSTMPredictor(nn.Module):
 
         # The LSTM takes word embeddings as inputs, and outputs hidden states
         # with dimensionality hidden_dim.
+        
+        
         self.lstm = nn.LSTM(input_dim, hidden_dim)
         self.hidden2out = nn.Linear(hidden_dim, self.output_dim)
         self.hidden = self.init_hidden()
@@ -34,7 +37,6 @@ class LSTMPredictor(nn.Module):
         #print(inputVec)
         
         inputVec = torch.FloatTensor(inputVec).view(1, 1, -1)
-        
         #print(inputVec)
         
         lstm_out, self.hidden = self.lstm(
@@ -45,8 +47,8 @@ class LSTMPredictor(nn.Module):
         print(lstm_out)
         print(self.hidden)
         """
-                
-        out_space = F.softmax(lstm_out, dim=2)
+        squashifier = nn.Tanh()  
+        out_space = squashifier(lstm_out)
 
         out_space = self.hidden2out(out_space).view(1, 1, self.output_dim)
         
@@ -89,8 +91,9 @@ class LSTMPredictorSoftmax(nn.Module):
         lstm_out, self.hidden = self.lstm(
             inputVec, self.hidden)
         
-        out_space = F.softmax(lstm_out, dim=2)
-
+        squashifier = nn.Tanh()  
+        out_space = squashifier(lstm_out)
+        
         out_space = self.hidden2out(out_space).view(1, 1, self.output_dim)
         
         new_out = F.softmax(out_space, dim=2)
@@ -109,8 +112,16 @@ def prepareLSTM(inputDim, hiddenDim, outputDim, isSoftMax):
         #print(inputDim)
         
     loss_function = nn.MSELoss()
-    optimizer = optim.SGD(model.parameters(), lr=.01)
+    optimizer = optim.SGD(model.parameters(), lr=.005)
     return (model, loss_function, optimizer)
+
+class plotter():
+    times = []
+    losses = []
+    ticker = 0
+
+#plotty = plotter()
+plottyPerEpoch = plotter()
 
 def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs):
     
@@ -123,11 +134,13 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
     
     #print(training_data)
     
+    
+    
     for epoch in range(epochs):
-        
-        #print(epoch)
-        
+        totalEpochLoss = 0
+
         for i in range(len(training_data) - 1):
+            
             
             # Step 1. Remember that Pytorch accumulates gradients.
             # We need to clear them out before each instance
@@ -157,10 +170,18 @@ def trainLSTM(output_dim, model, loss_function, optimizer, training_data, epochs
             #  calling optimizer.step()
             loss = loss_function(target, prediction)
             
+            #plotty.times.append(plotty.ticker)
+            #plotty.ticker = plotty.ticker + 1
+            #plotty.losses.append(loss.item())
             
-            #print(loss)
+            totalEpochLoss = totalEpochLoss + loss.item()
+            
             loss.backward()
             optimizer.step()
-
+    
+        plottyPerEpoch.times.append(plottyPerEpoch.ticker)
+        plottyPerEpoch.ticker = plottyPerEpoch.ticker + 1
+        plottyPerEpoch.losses.append(totalEpochLoss)
+    return
 #with torch.no_grad():
 #    print(model(torch.FloatTensor(training_data[0])))
